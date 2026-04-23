@@ -77,31 +77,6 @@ export default function CorporatePage() {
 
   return (
     <div ref={containerRef} className="min-h-screen bg-pearl selection:bg-gold selection:text-white">
-      {/* Fixed Navbar */}
-      <nav className="fixed w-full z-50 pt-6 px-6">
-        <div className="max-w-7xl mx-auto px-10 h-20 flex items-center justify-between bg-white/70 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.05)] rounded-full">
-          <div className="flex gap-10 items-center">
-            <Link href="/studio" className="text-[10px] tracking-[0.4em] uppercase hover:text-gold transition-all">The Studio</Link>
-            <Link href="/collections" className="text-[10px] tracking-[0.4em] uppercase hover:text-gold transition-all">Collections</Link>
-          </div>
-
-          <Link href="/" className="flex flex-col items-center">
-            <span className="text-2xl font-serif tracking-[0.3em] uppercase text-obsidian">The Velvet Tray</span>
-            <div className="h-[1px] w-12 bg-gold mt-1" />
-          </Link>
-
-          <div className="flex gap-10 items-center text-obsidian">
-            <Link href="/corporate" className="text-[10px] tracking-[0.4em] uppercase text-gold font-bold">Enterprise</Link>
-            <div className="flex items-center gap-6 border-l border-border/50 pl-10">
-              <Link href="/login"><User className="w-4 h-4 hover:text-gold transition-colors" /></Link>
-              <div className="relative">
-                <ShoppingBag className="w-4 h-4 hover:text-gold transition-colors" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-
       {/* Cinematic Hero */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <motion.div style={{ scale: heroScale, opacity: heroOpacity }} className="absolute inset-0 z-0">
@@ -221,22 +196,6 @@ export default function CorporatePage() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-pearl py-24 border-t border-border">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col items-center">
-          <span className="text-3xl font-serif tracking-[0.3em] uppercase text-obsidian mb-12">The Velvet Tray</span>
-          <div className="flex gap-16 text-[10px] uppercase tracking-[0.4em] text-text-secondary mb-16">
-            <Link href="/collections" className="hover:text-gold transition-colors">Collections</Link>
-            <Link href="/corporate" className="text-gold font-bold">Enterprise</Link>
-            <Link href="/studio" className="hover:text-gold transition-colors">Studio</Link>
-            <Link href="/contact" className="hover:text-gold transition-colors">Inquiry</Link>
-          </div>
-          <p className="text-[10px] text-text-secondary/40 uppercase tracking-[0.5em] text-center">
-            © 2026 The Velvet Tray. <br /> Curation of Origin & Excellence.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }

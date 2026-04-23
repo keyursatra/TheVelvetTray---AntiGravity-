@@ -4,8 +4,10 @@ import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import { ShoppingBag, User, Menu, X, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useRef } from 'react';
+import { useCart } from '@/context/CartContext';
 
 export default function Navbar() {
+  const { totalItems } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { scrollY } = useScroll();
@@ -46,10 +48,14 @@ export default function Navbar() {
             <Link href="/login" className="p-2 hover:bg-gold/10 rounded-full transition-all">
               <User className={`w-4 h-4 transition-colors ${isScrolled ? 'text-obsidian' : 'text-white md:text-obsidian'}`} />
             </Link>
-            <div className="relative p-2 hover:bg-gold/10 rounded-full transition-all cursor-pointer">
+            <Link href="/cart" className="relative p-2 hover:bg-gold/10 rounded-full transition-all cursor-pointer">
               <ShoppingBag className={`w-4 h-4 transition-colors ${isScrolled ? 'text-obsidian' : 'text-white md:text-obsidian'}`} />
-              <span className="absolute top-0 right-0 bg-gold text-white text-[7px] w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold shadow-lg">0</span>
-            </div>
+              {totalItems > 0 && (
+                <span className="absolute top-0 right-0 bg-gold text-white text-[7px] w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold shadow-lg">
+                  {totalItems}
+                </span>
+              )}
+            </Link>
           </div>
         </div>
 

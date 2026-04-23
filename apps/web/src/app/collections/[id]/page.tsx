@@ -5,7 +5,7 @@ import { ArrowLeft, ShoppingBag, User, Globe, ShieldCheck, Award, Sparkles, Chev
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useRef } from 'react';
+import { useState, useRef } from 'react';
 
 const collectionData: any = {
   'sustainable': {
@@ -96,42 +96,34 @@ const collectionData: any = {
   }
 };
 
+import { useCart } from '@/context/CartContext';
+
 export default function CollectionDetailPage() {
   const { id } = useParams();
   const collection = collectionData[id as string] || collectionData['sustainable'];
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll();
+  const [addedId, setAddedId] = useState<string | null>(null);
+  const { addToCart } = useCart();
   
   const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 1.1]);
 
+  const handleAddToCart = (product: any) => {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: parseInt(product.price.replace('₹', '').replace(',', '')),
+      quantity: 1,
+      image: product.image,
+      tag: collection.tag
+    });
+    setAddedId(product.id);
+    setTimeout(() => setAddedId(null), 2000);
+  };
+
   return (
     <div ref={containerRef} className="min-h-screen bg-pearl selection:bg-gold selection:text-white">
-      {/* Fixed Navbar */}
-      <nav className="fixed w-full z-50 pt-6 px-6">
-        <div className="max-w-7xl mx-auto px-10 h-20 flex items-center justify-between bg-white/70 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.05)] rounded-full">
-          <div className="flex gap-10 items-center">
-            <Link href="/collections" className="flex items-center gap-2 text-[10px] tracking-[0.4em] uppercase text-obsidian hover:text-gold transition-all">
-              <ArrowLeft className="w-3 h-3" /> Back
-            </Link>
-          </div>
-
-          <Link href="/" className="flex flex-col items-center">
-            <span className="text-2xl font-serif tracking-[0.3em] uppercase text-obsidian">The Velvet Tray</span>
-            <div className="h-[1px] w-12 bg-gold mt-1" />
-          </Link>
-
-          <div className="flex gap-10 items-center text-obsidian">
-            <div className="flex items-center gap-6">
-              <User className="w-4 h-4 hover:text-gold transition-colors" />
-              <div className="relative">
-                <ShoppingBag className="w-4 h-4 hover:text-gold transition-colors" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-
       {/* Cinematic Hero */}
       <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
         <motion.div style={{ scale: heroScale, opacity: heroOpacity }} className="absolute inset-0 z-0">
@@ -192,15 +184,17 @@ export default function CollectionDetailPage() {
               >
                 {/* Product Image */}
                 <div className="flex-1 w-full group">
-                  <div className="relative aspect-square rounded-[4rem] overflow-hidden shadow-2xl">
-                    <Image 
-                      src={product.image}
-                      alt={product.name}
-                      fill
-                      className="object-cover transition-transform duration-[3s] group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-obsidian/5 group-hover:bg-transparent transition-colors duration-1000" />
-                  </div>
+                  <Link href={`/products/${product.id}`}>
+                    <div className="relative aspect-square rounded-[4rem] overflow-hidden shadow-2xl">
+                      <Image 
+                        src={product.image}
+                        alt={product.name}
+                        fill
+                        className="object-cover transition-transform duration-[3s] group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-obsidian/5 group-hover:bg-transparent transition-colors duration-1000" />
+                    </div>
+                  </Link>
                 </div>
 
                 {/* Product Details */}
@@ -210,7 +204,9 @@ export default function CollectionDetailPage() {
                        <MapPin className="w-4 h-4" />
                        <span className="text-[10px] uppercase tracking-[0.4em] font-bold">{product.origin}</span>
                     </div>
-                    <h3 className="text-6xl font-serif text-obsidian italic leading-tight">{product.name}</h3>
+                    <Link href={`/products/${product.id}`}>
+                      <h3 className="text-6xl font-serif text-obsidian italic leading-tight hover:text-gold transition-colors">{product.name}</h3>
+                    </Link>
                     <span className="text-3xl font-serif text-gold block">{product.price}</span>
                   </div>
 
@@ -231,10 +227,15 @@ export default function CollectionDetailPage() {
                   </div>
 
                   <div className="pt-10 flex gap-8">
-                    <button className="btn-luxe">Add to Tray</button>
-                    <button className="flex items-center gap-3 text-[10px] uppercase tracking-[0.4em] font-bold text-text-secondary hover:text-gold transition-all">
-                      Custom Inquiry <ChevronRight className="w-4 h-4" />
+                    <button 
+                      onClick={() => handleAddToCart(product)}
+                      className={`btn-luxe transition-all duration-500 ${addedId === product.id ? 'bg-gold' : 'bg-obsidian'}`}
+                    >
+                      {addedId === product.id ? 'Added to Tray' : 'Add to Tray'}
                     </button>
+                    <Link href={`/products/${product.id}`} className="flex items-center gap-3 text-[10px] uppercase tracking-[0.4em] font-bold text-text-secondary hover:text-gold transition-all">
+                      View Dossier <ChevronRight className="w-4 h-4" />
+                    </Link>
                   </div>
                 </div>
               </motion.div>
@@ -263,22 +264,6 @@ export default function CollectionDetailPage() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-pearl py-24">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col items-center">
-          <span className="text-3xl font-serif tracking-[0.3em] uppercase text-obsidian mb-12">The Velvet Tray</span>
-          <div className="flex gap-16 text-[10px] uppercase tracking-[0.4em] text-text-secondary mb-16">
-            <Link href="/collections" className="hover:text-gold transition-colors">Collections</Link>
-            <Link href="/corporate" className="hover:text-gold transition-colors">Enterprise</Link>
-            <Link href="/studio" className="hover:text-gold transition-colors">Studio</Link>
-            <Link href="/contact" className="hover:text-gold transition-colors">Inquiry</Link>
-          </div>
-          <p className="text-[10px] text-text-secondary/40 uppercase tracking-[0.5em] text-center">
-            © 2026 The Velvet Tray. <br /> Curation of Origin & Excellence.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }
