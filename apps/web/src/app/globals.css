@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@theme {
+  /* Ultra-Luxe Color Palette */
+  --color-crimson: #720000;         /* Deep Royal Crimson */
+  --color-gold: #C5A028;            /* Sovereign Gold */
+  --color-obsidian: #0A0A0A;        /* Obsidian Night */
+  --color-pearl: #FAF9F6;           /* Antique Pearl Ivory */
+  --color-bg-warm: #F8F5F2;
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #555555;
+  --color-border: #E5E1DA;
+
+  /* Spacing Units */
+  --spacing-container: 1440px;
+}
+
+@layer base {
+  body {
+    @apply bg-pearl text-text-primary font-sans antialiased selection:bg-gold selection:text-white;
+  }
+
+  h1, h2, h3, h4, .font-serif {
+    font-family: "Cormorant Garamond", serif;
+    @apply font-light tracking-tight;
+  }
+}
+
+@layer components {
+  .btn-luxe {
+    @apply relative overflow-hidden px-8 py-4 bg-obsidian text-pearl uppercase tracking-[0.3em] text-[10px] font-bold transition-all duration-700 hover:shadow-[0_20px_50px_rgba(0,0,0,0.15)] hover:-translate-y-1 active:scale-95;
+  }
+
+  .btn-luxe-outline {
+    @apply relative overflow-hidden px-8 py-4 border border-obsidian text-obsidian uppercase tracking-[0.3em] text-[10px] font-bold transition-all duration-700 hover:bg-obsidian hover:text-pearl;
+  }
+
+  .card-luxe {
+    @apply bg-white border border-border/50 shadow-[0_4px_30px_rgba(0,0,0,0.03)] transition-all duration-1000 hover:shadow-[0_30px_60px_rgba(0,0,0,0.08)] hover:border-gold/30;
+  }
+
+  .text-gold-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-gold via-[#E8C86A] to-gold;
+  }
+}
+
+/* Custom Scrollbar for Luxury Experience */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-pearl);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold);
+  border-radius: 10px;
+}
