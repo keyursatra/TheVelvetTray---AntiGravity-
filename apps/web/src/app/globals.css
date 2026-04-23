@@ -17,26 +17,30 @@
 
 @layer base {
   body {
-    @apply bg-pearl text-text-primary font-sans antialiased selection:bg-gold selection:text-white;
+    @apply bg-pearl text-text-primary font-sans antialiased selection:bg-gold selection:text-white overflow-x-hidden;
   }
 
   h1, h2, h3, h4, .font-serif {
-    font-family: "Cormorant Garamond", serif;
+    font-family: var(--font-serif), serif;
     @apply font-light tracking-tight;
   }
 }
 
 @layer components {
   .btn-luxe {
-    @apply relative overflow-hidden px-8 py-4 bg-obsidian text-pearl uppercase tracking-[0.3em] text-[10px] font-bold transition-all duration-700 hover:shadow-[0_20px_50px_rgba(0,0,0,0.15)] hover:-translate-y-1 active:scale-95;
+    @apply relative overflow-hidden px-10 py-5 bg-obsidian text-pearl uppercase tracking-[0.4em] text-[9px] font-bold transition-all duration-700 hover:shadow-[0_20px_50px_rgba(0,0,0,0.2)] hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3;
   }
 
   .btn-luxe-outline {
-    @apply relative overflow-hidden px-8 py-4 border border-obsidian text-obsidian uppercase tracking-[0.3em] text-[10px] font-bold transition-all duration-700 hover:bg-obsidian hover:text-pearl;
+    @apply relative overflow-hidden px-10 py-5 border border-obsidian/20 text-obsidian uppercase tracking-[0.4em] text-[9px] font-bold transition-all duration-700 hover:bg-obsidian hover:text-pearl;
+  }
+
+  .glass-card {
+    @apply bg-white/40 backdrop-blur-xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.03)];
   }
 
   .card-luxe {
-    @apply bg-white border border-border/50 shadow-[0_4px_30px_rgba(0,0,0,0.03)] transition-all duration-1000 hover:shadow-[0_30px_60px_rgba(0,0,0,0.08)] hover:border-gold/30;
+    @apply bg-white border border-border/50 shadow-[0_4px_30px_rgba(0,0,0,0.02)] transition-all duration-1000 hover:shadow-[0_40px_80px_rgba(0,0,0,0.06)] hover:border-gold/20 rounded-[2.5rem] overflow-hidden;
   }
 
   .text-gold-gradient {
@@ -44,9 +48,18 @@
   }
 }
 
-/* Custom Scrollbar for Luxury Experience */
+/* Elegant Scroll Reveal Animations */
+.reveal-up {
+  @apply opacity-0 translate-y-10 transition-all duration-1000;
+}
+
+.reveal-up.active {
+  @apply opacity-100 translate-y-0;
+}
+
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 ::-webkit-scrollbar-track {
   background: var(--color-pearl);
@@ -54,4 +67,9 @@
 ::-webkit-scrollbar-thumb {
   background: var(--color-gold);
   border-radius: 10px;
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
 }

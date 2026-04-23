@@ -43,32 +43,6 @@ export default function HomePage() {
 
   return (
     <div ref={containerRef} className="min-h-screen flex flex-col selection:bg-gold selection:text-white">
-      {/* Floating Glass Navbar */}
-      <nav className="fixed w-full z-50 pt-6 px-6">
-        <div className="max-w-7xl mx-auto px-10 h-20 flex items-center justify-between bg-white/70 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.05)] rounded-full">
-          <div className="flex gap-10 items-center">
-            <Link href="/studio" className="text-[10px] tracking-[0.4em] uppercase hover:text-gold transition-all">The Studio</Link>
-            <Link href="/collections" className="text-[10px] tracking-[0.4em] uppercase hover:text-gold transition-all">Collections</Link>
-          </div>
-
-          <Link href="/" className="flex flex-col items-center">
-            <span className="text-2xl font-serif tracking-[0.3em] uppercase text-obsidian">The Velvet Tray</span>
-            <div className="h-[1px] w-12 bg-gold mt-1" />
-          </Link>
-
-          <div className="flex gap-10 items-center text-obsidian">
-            <Link href="/corporate" className="text-[10px] tracking-[0.4em] uppercase hover:text-gold transition-all">Enterprise</Link>
-            <div className="flex items-center gap-6 border-l border-border/50 pl-10">
-              <Link href="/login"><User className="w-4 h-4 hover:text-gold transition-colors" /></Link>
-              <div className="relative">
-                <ShoppingBag className="w-4 h-4 hover:text-gold transition-colors" />
-                <span className="absolute -top-2 -right-2 bg-gold text-white text-[8px] w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold">0</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-
       {/* Cinematic Hero */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <motion.div style={{ scale: heroScale }} className="absolute inset-0 z-0">
@@ -90,7 +64,7 @@ export default function HomePage() {
         >
           <span className="text-gold uppercase tracking-[0.6em] text-[10px] font-bold mb-8 block">Curation of Origin</span>
           <h1 className="text-8xl md:text-[10rem] font-serif text-white mb-12 leading-[0.85] italic">
-            Luxury <br /> <span className="not-italic">Redefined.</span>
+            Velvet <br /> <span className="not-italic">Tray.</span>
           </h1>
           <div className="flex gap-8 justify-center mt-12">
             <Link href="/collections" className="btn-luxe">

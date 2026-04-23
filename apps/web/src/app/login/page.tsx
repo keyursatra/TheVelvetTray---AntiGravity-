@@ -11,7 +11,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex">
       {/* Left Side: Editorial Image */}
       <div className="hidden lg:block lg:w-1/2 relative">
-        <Image 
+        <Image
           src="/products/emerald-executive.jpg"
           alt="The Velvet Tray Entrance"
           fill
@@ -27,7 +27,7 @@ export default function LoginPage() {
 
       {/* Right Side: Login Form */}
       <div className="w-full lg:w-1/2 bg-bg-warm flex items-center justify-center p-8 md:p-24">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="max-w-md w-full text-center"
@@ -41,14 +41,14 @@ export default function LoginPage() {
           <p className="text-text-secondary mb-12 italic">Sign in to manage your collections, track orders, and explore the Studio Atlas.</p>
 
           <div className="space-y-4">
-            <button 
+            <button
               onClick={() => signIn('google', { callbackUrl: '/' })}
               className="w-full flex items-center justify-center gap-3 bg-white border border-border py-4 px-6 rounded-none text-sm uppercase tracking-widest hover:bg-bg-muted transition-all group"
             >
               <Image src="https://authjs.dev/img/providers/google.svg" alt="Google" width={20} height={20} />
               <span className="group-hover:text-crimson transition-colors">Continue with Google</span>
             </button>
-            
+
             <div className="relative py-4">
               <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border"></div></div>
               <div className="relative flex justify-center text-xs uppercase"><span className="bg-bg-warm px-4 text-text-secondary tracking-widest">Enterprise Access Only</span></div>

@@ -1,31 +1,34 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Building2, Send, CheckCircle2, ChevronRight, Globe, ShieldCheck, Loader2 } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { Building2, Send, CheckCircle2, ChevronRight, Globe, ShieldCheck, Loader2, ShoppingBag, User } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useRef } from 'react';
 import emailjs from '@emailjs/browser';
 import { saveInquiry } from '@/app/actions/inquiry';
 
 export default function CorporatePage() {
   const form = useRef<HTMLFormElement>(null);
+  const containerRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  
+  const { scrollYProgress } = useScroll();
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 1.1]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.current) return;
 
     setIsSubmitting(true);
-    
-    // Explicitly initialize EmailJS with Public Key
     emailjs.init('OFwzXvTobO5b8ygsd');
 
     const formData = new FormData(form.current);
     const data = Object.fromEntries(formData.entries());
 
     try {
-      // 1. Save to MongoDB
       await saveInquiry({
         companyName: data.companyName as string,
         email: data.email as string,
@@ -35,7 +38,6 @@ export default function CorporatePage() {
         requirements: data.requirements as string,
       });
 
-      // 2. Send via EmailJS
       await emailjs.sendForm(
         'service_pim746p',
         'template_klanomj',
@@ -74,131 +76,167 @@ export default function CorporatePage() {
   }
 
   return (
-    <div className="min-h-screen bg-pearl">
-      {/* Editorial Header */}
-      <section className="pt-40 pb-24 border-b border-border/50">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-           <motion.div
-             initial={{ opacity: 0, y: 20 }}
-             animate={{ opacity: 1, y: 0 }}
-           >
-              <span className="text-gold uppercase tracking-[0.5em] text-[10px] font-bold block mb-8">Executive Gifting Services</span>
-              <h1 className="text-8xl font-serif mb-8 text-obsidian">Bespoke <span className="italic text-gold">Consultation.</span></h1>
-              <p className="max-w-2xl mx-auto text-xl text-text-secondary font-light leading-relaxed">
-                Elevate your corporate appreciation programs with hand-curated collections sourced directly from India's heritage craft clusters.
-              </p>
-           </motion.div>
+    <div ref={containerRef} className="min-h-screen bg-pearl selection:bg-gold selection:text-white">
+      {/* Fixed Navbar */}
+      <nav className="fixed w-full z-50 pt-6 px-6">
+        <div className="max-w-7xl mx-auto px-10 h-20 flex items-center justify-between bg-white/70 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.05)] rounded-full">
+          <div className="flex gap-10 items-center">
+            <Link href="/studio" className="text-[10px] tracking-[0.4em] uppercase hover:text-gold transition-all">The Studio</Link>
+            <Link href="/collections" className="text-[10px] tracking-[0.4em] uppercase hover:text-gold transition-all">Collections</Link>
+          </div>
+
+          <Link href="/" className="flex flex-col items-center">
+            <span className="text-2xl font-serif tracking-[0.3em] uppercase text-obsidian">The Velvet Tray</span>
+            <div className="h-[1px] w-12 bg-gold mt-1" />
+          </Link>
+
+          <div className="flex gap-10 items-center text-obsidian">
+            <Link href="/corporate" className="text-[10px] tracking-[0.4em] uppercase text-gold font-bold">Enterprise</Link>
+            <div className="flex items-center gap-6 border-l border-border/50 pl-10">
+              <Link href="/login"><User className="w-4 h-4 hover:text-gold transition-colors" /></Link>
+              <div className="relative">
+                <ShoppingBag className="w-4 h-4 hover:text-gold transition-colors" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Cinematic Hero */}
+      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+        <motion.div style={{ scale: heroScale, opacity: heroOpacity }} className="absolute inset-0 z-0">
+          <Image
+            src="/corporate/hero.png"
+            alt="Executive Boardroom"
+            fill
+            className="object-cover brightness-75"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-pearl" />
+        </motion.div>
+
+        <div className="relative z-10 text-center">
+          <motion.span 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-gold uppercase tracking-[0.8em] text-[10px] font-bold mb-8 block"
+          >
+            Executive Concierge
+          </motion.span>
+          <motion.h1 
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-8xl md:text-9xl font-serif text-white mb-12 italic"
+          >
+            Bespoke <span className="not-italic">Consultation.</span>
+          </motion.h1>
         </div>
       </section>
 
-      <main className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-24 py-32">
-        
-        {/* Left: Concierge Benefits */}
-        <div className="lg:col-span-5 space-y-16">
-          <div className="bg-white p-12 rounded-[2.5rem] border border-border/50 shadow-[0_30px_60px_rgba(0,0,0,0.03)]">
-            <h3 className="text-3xl font-serif mb-10 text-obsidian">Why Partner with Us?</h3>
-            <div className="space-y-10">
-              {[
-                { icon: Globe, title: 'Provenance Verified', desc: 'Every item is traceable to the artisan who crafted it.' },
-                { icon: ShieldCheck, title: 'Dedicated Concierge', desc: 'A single point of contact for bulk logistics and global shipping.' },
-                { icon: Building2, title: 'Volume Tiering', desc: 'Exclusive commercial rates for enterprise-scale requirements.' }
-              ].map((benefit, i) => (
-                <div key={i} className="flex gap-6">
-                  <div className="w-12 h-12 bg-bg-warm rounded-full flex items-center justify-center flex-shrink-0 text-gold">
-                    <benefit.icon className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="font-serif text-xl mb-2">{benefit.title}</h4>
-                    <p className="text-xs uppercase tracking-widest text-text-secondary leading-loose">{benefit.desc}</p>
-                  </div>
+      {/* Benefits Grid */}
+      <section className="py-40 bg-pearl relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-10">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-20">
+            {[
+              { icon: Globe, title: 'Provenance Verified', desc: 'Every item is traceable to the artisan lineage who crafted it, ensuring authentic heritage.' },
+              { icon: ShieldCheck, title: 'Dedicated Concierge', desc: 'A white-glove service with a single point of contact for complex bulk logistics and global shipping.' },
+              { icon: Building2, title: 'Volume Tiering', desc: 'Exclusive commercial rates and bespoke packaging designed for enterprise-scale requirements.' }
+            ].map((benefit, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: i * 0.2 }}
+                className="group p-12 bg-white rounded-[3rem] border border-border/50 hover:border-gold/30 hover:shadow-2xl transition-all duration-1000"
+              >
+                <div className="w-16 h-16 bg-bg-warm rounded-full flex items-center justify-center mb-10 text-gold group-hover:scale-110 transition-transform duration-700">
+                  <benefit.icon className="w-6 h-6" />
                 </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="px-12 py-8 bg-obsidian text-pearl rounded-3xl flex items-center justify-between group cursor-pointer hover:bg-gold transition-all duration-700">
-             <span className="text-[10px] uppercase tracking-[0.4em] font-bold">Download Catalog 2026</span>
-             <ChevronRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+                <h4 className="font-serif text-3xl mb-6 text-obsidian">{benefit.title}</h4>
+                <p className="text-text-secondary text-lg font-light leading-relaxed italic opacity-70">"{benefit.desc}"</p>
+              </motion.div>
+            ))}
           </div>
         </div>
+      </section>
 
-        {/* Right: The Inquiry Form */}
-        <div className="lg:col-span-7">
-          <form ref={form} onSubmit={handleSubmit} className="space-y-12 bg-white p-16 rounded-[3rem] border border-border/50 shadow-2xl">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-              <div className="space-y-2">
-                <label className="text-[9px] uppercase tracking-[0.4em] text-text-secondary font-bold">Company Name</label>
-                <input 
-                  name="companyName" 
-                  required 
-                  className="w-full bg-transparent border-b border-border py-4 focus:border-gold outline-none transition-all placeholder:text-border font-light"
-                  placeholder="The Heritage Group"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[9px] uppercase tracking-[0.4em] text-text-secondary font-bold">Business Email</label>
-                <input 
-                  name="email" 
-                  type="email" 
-                  required 
-                  className="w-full bg-transparent border-b border-border py-4 focus:border-gold outline-none transition-all placeholder:text-border font-light"
-                  placeholder="vp@heritage.com"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[9px] uppercase tracking-[0.4em] text-text-secondary font-bold">Approximate Quantity</label>
-                <input 
-                  name="quantity" 
-                  required 
-                  className="w-full bg-transparent border-b border-border py-4 focus:border-gold outline-none transition-all placeholder:text-border font-light"
-                  placeholder="50 - 500 units"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[9px] uppercase tracking-[0.4em] text-text-secondary font-bold">Occasion / Timeline</label>
-                <input 
-                  name="occasion" 
-                  required 
-                  className="w-full bg-transparent border-b border-border py-4 focus:border-gold outline-none transition-all placeholder:text-border font-light"
-                  placeholder="Festive Gifting / Oct 2026"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-[9px] uppercase tracking-[0.4em] text-text-secondary font-bold">Custom Requirements</label>
-              <textarea 
-                name="requirements" 
-                rows={4}
-                className="w-full bg-transparent border-b border-border py-4 focus:border-gold outline-none transition-all placeholder:text-border font-light resize-none"
-                placeholder="Share your vision for branding, regional preferences, or theme..."
+      {/* Inquiry Dossier */}
+      <section className="py-40 bg-obsidian text-pearl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-1/2 h-full bg-gold/5 -skew-x-12 -translate-x-32" />
+        
+        <div className="max-w-7xl mx-auto px-10 grid grid-cols-1 lg:grid-cols-2 gap-32 items-center">
+          <div className="relative z-10">
+            <span className="text-gold uppercase tracking-[0.5em] text-[10px] font-bold block mb-8">The Inquiry Dossier</span>
+            <h2 className="text-7xl font-serif mb-12 leading-tight">Elevate your <br /> <span className="italic text-gold">Appreciation.</span></h2>
+            <p className="text-xl text-pearl/50 font-light leading-relaxed mb-16 max-w-md">
+              Share your vision with our Executive Concierge. We respond within 4 business hours with a custom-curated proposal.
+            </p>
+            
+            <div className="relative aspect-square w-full rounded-[3rem] overflow-hidden shadow-2xl">
+              <Image 
+                src="/corporate/concierge.png"
+                alt="Concierge Detail"
+                fill
+                className="object-cover"
               />
             </div>
+          </div>
 
-            <button 
-              type="submit" 
-              disabled={isSubmitting}
-              className="btn-luxe w-full flex items-center justify-center gap-4 py-6"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Transmitting...</span>
-                </>
-              ) : (
-                <>
-                  <Send className="w-4 h-4" />
-                  <span>Submit Inquiry to Concierge</span>
-                </>
-              )}
-            </button>
+          <div className="relative z-10">
+            <form ref={form} onSubmit={handleSubmit} className="space-y-12 bg-white p-16 rounded-[4rem] text-obsidian shadow-[0_50px_100px_rgba(0,0,0,0.3)]">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div className="space-y-2">
+                  <label className="text-[9px] uppercase tracking-[0.4em] text-text-secondary font-bold">Company Name</label>
+                  <input name="companyName" required className="w-full bg-transparent border-b border-border py-4 focus:border-gold outline-none transition-all placeholder:text-border/40 font-light" placeholder="The Heritage Group" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] uppercase tracking-[0.4em] text-text-secondary font-bold">Business Email</label>
+                  <input name="email" type="email" required className="w-full bg-transparent border-b border-border py-4 focus:border-gold outline-none transition-all placeholder:text-border/40 font-light" placeholder="vp@heritage.com" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] uppercase tracking-[0.4em] text-text-secondary font-bold">Approximate Quantity</label>
+                  <input name="quantity" required className="w-full bg-transparent border-b border-border py-4 focus:border-gold outline-none transition-all placeholder:text-border/40 font-light" placeholder="50 - 500 units" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] uppercase tracking-[0.4em] text-text-secondary font-bold">Occasion / Timeline</label>
+                  <input name="occasion" required className="w-full bg-transparent border-b border-border py-4 focus:border-gold outline-none transition-all placeholder:text-border/40 font-light" placeholder="Festive / Oct 2026" />
+                </div>
+              </div>
 
-            <p className="text-center text-[10px] text-text-secondary/40 uppercase tracking-[0.3em]">
-              Encrypted Inquiry. Responding within 4 Business Hours.
-            </p>
-          </form>
+              <div className="space-y-2">
+                <label className="text-[9px] uppercase tracking-[0.4em] text-text-secondary font-bold">Custom Requirements</label>
+                <textarea name="requirements" rows={3} className="w-full bg-transparent border-b border-border py-4 focus:border-gold outline-none transition-all placeholder:text-border/40 font-light resize-none" placeholder="Branding, regional preferences, theme..." />
+              </div>
+
+              <button type="submit" disabled={isSubmitting} className="btn-luxe w-full flex items-center justify-center gap-4 py-6">
+                {isSubmitting ? (
+                  <><Loader2 className="w-5 h-5 animate-spin" /><span>Transmitting...</span></>
+                ) : (
+                  <><Send className="w-4 h-4" /><span>Submit to Concierge</span></>
+                )}
+              </button>
+            </form>
+          </div>
         </div>
-      </main>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-pearl py-24 border-t border-border">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col items-center">
+          <span className="text-3xl font-serif tracking-[0.3em] uppercase text-obsidian mb-12">The Velvet Tray</span>
+          <div className="flex gap-16 text-[10px] uppercase tracking-[0.4em] text-text-secondary mb-16">
+            <Link href="/collections" className="hover:text-gold transition-colors">Collections</Link>
+            <Link href="/corporate" className="text-gold font-bold">Enterprise</Link>
+            <Link href="/studio" className="hover:text-gold transition-colors">Studio</Link>
+            <Link href="/contact" className="hover:text-gold transition-colors">Inquiry</Link>
+          </div>
+          <p className="text-[10px] text-text-secondary/40 uppercase tracking-[0.5em] text-center">
+            © 2026 The Velvet Tray. <br /> Curation of Origin & Excellence.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
