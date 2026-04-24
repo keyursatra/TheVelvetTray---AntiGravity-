@@ -7,13 +7,51 @@ import Link from 'next/link';
 import { Mail, Github, Lock, User, ArrowRight, Loader2, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 
+import { registerUser } from '../actions/auth';
+import { useRouter } from 'next/navigation';
+
 export default function AuthPage() {
+  const router = useRouter();
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState<{ type: 'error' | 'success', text: string } | null>(null);
 
   const handleOAuthSignIn = async (provider: string) => {
     setIsLoading(true);
     await signIn(provider, { callbackUrl: '/' });
+    setIsLoading(false);
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setMessage(null);
+
+    const formData = new FormData(e.currentTarget);
+
+    if (mode === 'signup') {
+      const result = await registerUser(formData);
+      if (result.error) {
+        setMessage({ type: 'error', text: result.error });
+      } else {
+        setMessage({ type: 'success', text: 'Initiation successful. Welcome to the House.' });
+        setTimeout(() => setMode('login'), 2000);
+      }
+    } else {
+      // Login logic will be implemented with CredentialsProvider
+      const result = await signIn('credentials', {
+        redirect: false,
+        email: formData.get('email') as string,
+        password: formData.get('password') as string,
+        callbackUrl: '/',
+      });
+
+      if (result?.error) {
+        setMessage({ type: 'error', text: 'Invalid credentials. Access denied.' });
+      } else {
+        router.push('/');
+      }
+    }
     setIsLoading(false);
   };
 
@@ -74,14 +112,14 @@ export default function AuthPage() {
             {/* Tab Switcher */}
             <div className="flex justify-center gap-12 border-b border-border pb-6">
               <button 
-                onClick={() => setMode('login')}
+                onClick={() => { setMode('login'); setMessage(null); }}
                 className={`text-[10px] uppercase tracking-[0.5em] font-bold transition-all duration-500 relative ${mode === 'login' ? 'text-gold' : 'text-text-secondary hover:text-obsidian'}`}
               >
                 Access
                 {mode === 'login' && <motion.div layoutId="authTab" className="absolute -bottom-6.5 left-0 right-0 h-[2px] bg-gold" />}
               </button>
               <button 
-                onClick={() => setMode('signup')}
+                onClick={() => { setMode('signup'); setMessage(null); }}
                 className={`text-[10px] uppercase tracking-[0.5em] font-bold transition-all duration-500 relative ${mode === 'signup' ? 'text-gold' : 'text-text-secondary hover:text-obsidian'}`}
               >
                 Initiate
@@ -94,6 +132,20 @@ export default function AuthPage() {
                 {mode === 'login' ? 'Continue your Journey.' : 'Begin your Narrative.'}
               </h1>
             </div>
+
+            {/* Notification Message */}
+            <AnimatePresence mode="wait">
+              {message && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className={`p-4 rounded-2xl text-[10px] uppercase tracking-widest font-bold text-center ${message.type === 'error' ? 'bg-crimson/10 text-crimson' : 'bg-gold/10 text-gold'}`}
+                >
+                  {message.text}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* OAuth Options */}
             <div className="space-y-4">
@@ -119,13 +171,13 @@ export default function AuthPage() {
             </div>
 
             {/* Local Auth Form */}
-            <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-8" onSubmit={handleSubmit}>
               {mode === 'signup' && (
                 <div className="space-y-2">
                   <label className="text-[8px] uppercase tracking-[0.5em] text-text-secondary font-bold">Full Name</label>
                   <div className="relative">
                     <User className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/50" />
-                    <input type="text" className="w-full bg-transparent border-b border-border py-4 pl-10 focus:border-gold outline-none transition-all placeholder:text-border/40 font-light" placeholder="Aurobindo Ghose" />
+                    <input name="name" type="text" required className="w-full bg-transparent border-b border-border py-4 pl-10 focus:border-gold outline-none transition-all placeholder:text-border/40 font-light" placeholder="Aurobindo Ghose" />
                   </div>
                 </div>
               )}
@@ -133,18 +185,18 @@ export default function AuthPage() {
                 <label className="text-[8px] uppercase tracking-[0.5em] text-text-secondary font-bold">Email Address</label>
                 <div className="relative">
                   <Mail className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/50" />
-                  <input type="email" className="w-full bg-transparent border-b border-border py-4 pl-10 focus:border-gold outline-none transition-all placeholder:text-border/40 font-light" placeholder="patron@heritage.com" />
+                  <input name="email" type="email" required className="w-full bg-transparent border-b border-border py-4 pl-10 focus:border-gold outline-none transition-all placeholder:text-border/40 font-light" placeholder="patron@heritage.com" />
                 </div>
               </div>
               <div className="space-y-2">
                 <label className="text-[8px] uppercase tracking-[0.5em] text-text-secondary font-bold">Password</label>
                 <div className="relative">
                   <Lock className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/50" />
-                  <input type="password" className="w-full bg-transparent border-b border-border py-4 pl-10 focus:border-gold outline-none transition-all placeholder:text-border/40 font-light" placeholder="••••••••" />
+                  <input name="password" type="password" required className="w-full bg-transparent border-b border-border py-4 pl-10 focus:border-gold outline-none transition-all placeholder:text-border/40 font-light" placeholder="••••••••" />
                 </div>
               </div>
 
-              <button type="submit" className="btn-luxe w-full py-6 rounded-full mt-10">
+              <button type="submit" disabled={isLoading} className="btn-luxe w-full py-6 rounded-full mt-10">
                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
                   <>
                     <span>{mode === 'login' ? 'Enter the House' : 'Initialize Account'}</span>
