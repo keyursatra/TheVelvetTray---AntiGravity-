@@ -6,10 +6,17 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "postinstall": "prisma generate",
+    "db:seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts"
+  },
+  "prisma": {
+    "seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts"
   },
   "devDependencies": {
     "prettier": "^3.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.0.0",
     "turbo": "latest"
   },
   "workspaces": [

@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: the-velvet-tray-backend
+    env: node
+    plan: free
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm start --workspace=web
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: DATABASE_URL
+        sync: false
+      - key: NEXTAUTH_SECRET
+        generateValue: true
+      - key: NEXTAUTH_URL
+        value: https://the-velvet-tray-backend.onrender.com
+      - key: PORT
+        value: 10000
